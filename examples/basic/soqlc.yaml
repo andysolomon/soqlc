@@ -1,0 +1,12 @@
+version: "1"
+soql:
+  - schema: ./schema.soql.json
+    queries: ./queries/**/*.soql
+    apiVersion: "60.0"
+    gen:
+      typescript:
+        out: ./generated
+        client: driverAgnostic
+        emitRuntimeImport: "soqlc/runtime"
+        dateAs: string
+        nullableMode: optional

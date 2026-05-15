@@ -1,0 +1,17 @@
+-- name: GetAccountById :one
+SELECT Id, Name, Industry, AnnualRevenue
+FROM Account
+WHERE Id = :id;
+
+-- name: ListAccountsByIndustry :many
+SELECT Id, Name, AnnualRevenue
+FROM Account
+WHERE Industry = :industry
+ORDER BY Name ASC
+LIMIT :max;
+
+-- name: GetAccountWithContacts :one
+SELECT Id, Name,
+       (SELECT Id, FirstName, LastName, Email FROM Contacts)
+FROM Account
+WHERE Id = :id;

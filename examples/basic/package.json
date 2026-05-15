@@ -1,0 +1,17 @@
+{
+  "name": "soqlc-example-basic",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "soqlc generate --config ./soqlc.yaml",
+    "start": "tsx src/main.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "soqlc": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.3"
+  }
+}

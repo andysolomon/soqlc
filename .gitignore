@@ -1,0 +1,13 @@
+node_modules
+dist
+.tsbuildinfo
+*.log
+.DS_Store
+.env
+.env.*
+coverage
+examples/**/generated/*
+!examples/**/generated/.gitkeep
+
+# Salesforce SOQL/SOSL reference PDF (copyrighted; for local reference only)
+salesforce_soql_sosl.pdf

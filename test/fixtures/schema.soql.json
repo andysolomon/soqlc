@@ -1,0 +1,39 @@
+{
+  "version": "1",
+  "sObjects": [
+    {
+      "name": "Account",
+      "fields": [
+        { "name": "Id", "type": "Id", "nillable": false },
+        { "name": "Name", "type": "String", "nillable": false, "length": 255 },
+        { "name": "AnnualRevenue", "type": "Currency", "nillable": true },
+        {
+          "name": "Industry",
+          "type": "Picklist",
+          "nillable": true,
+          "picklistValues": ["Tech", "Finance", "Healthcare"]
+        }
+      ],
+      "childRelationships": [
+        { "childSObject": "Contact", "field": "AccountId", "relationshipName": "Contacts" }
+      ]
+    },
+    {
+      "name": "Contact",
+      "fields": [
+        { "name": "Id", "type": "Id", "nillable": false },
+        { "name": "FirstName", "type": "String", "nillable": true },
+        { "name": "LastName", "type": "String", "nillable": false },
+        { "name": "Email", "type": "Email", "nillable": true },
+        {
+          "name": "AccountId",
+          "type": "Reference",
+          "nillable": true,
+          "referenceTo": ["Account"],
+          "relationshipName": "Account"
+        },
+        { "name": "Lifetime_Value__c", "type": "Currency", "nillable": true }
+      ]
+    }
+  ]
+}

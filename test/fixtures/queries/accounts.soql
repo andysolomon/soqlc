@@ -1,0 +1,23 @@
+-- name: GetAccountById :one
+SELECT Id, Name, Industry, AnnualRevenue
+FROM Account
+WHERE Id = :id;
+
+-- name: ListAccountsByIndustry :many
+SELECT Id, Name, AnnualRevenue
+FROM Account
+WHERE Industry = :industry
+ORDER BY Name ASC
+LIMIT :max;
+
+-- name: GetAccountWithContacts :one
+SELECT Id, Name,
+       (SELECT Id, FirstName, LastName, Email FROM Contacts)
+FROM Account
+WHERE Id = :id;
+
+-- name: CountByIndustry :many
+SELECT Industry, COUNT(Id) total
+FROM Account
+GROUP BY Industry
+HAVING COUNT(Id) > 0;
