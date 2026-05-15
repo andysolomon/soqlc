@@ -2,6 +2,8 @@
 
 Generate **type-safe TypeScript** code from SOQL queries.
 
+![soqlc — .soql + schema → type-safe TypeScript](docs/hero.svg)
+
 soqlc is to SOQL what [sqlc](https://github.com/sqlc-dev/sqlc) is to SQL: you
 write `.soql` files and a schema describing your sObjects, and soqlc emits
 strongly-typed TypeScript functions that execute those queries through a
