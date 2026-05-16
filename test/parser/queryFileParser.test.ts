@@ -41,4 +41,15 @@ SELECT Id FROM A;
     expect(result.errors).toEqual([]);
     expect(result.queries).toHaveLength(1);
   });
+
+  it("accepts // headers and // line comments (SF DX style)", () => {
+    const text = `// leading note
+// name: GetA :one
+SELECT Id FROM A WHERE Id = :id;
+`;
+    const result = parseQueryFile(text, "x.soql");
+    expect(result.errors).toEqual([]);
+    expect(result.queries).toHaveLength(1);
+    expect(result.queries[0]?.name).toBe("GetA");
+  });
 });

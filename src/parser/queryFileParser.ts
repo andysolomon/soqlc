@@ -1,6 +1,6 @@
 import type { NamedQuery } from "./ast.js";
 
-const HEADER_RE = /^--\s*name:\s*([A-Za-z_][A-Za-z0-9_]*)\s*:(one|many)\s*$/;
+const HEADER_RE = /^(?:--|\/\/)\s*name:\s*([A-Za-z_][A-Za-z0-9_]*)\s*:(one|many)\s*$/;
 
 export interface QueryFileError {
   message: string;
@@ -56,11 +56,15 @@ export function parseQueryFile(text: string, filePath: string): QueryFileResult 
     }
     if (current) {
       current.buf.push(line);
-    } else if (line.trim().length > 0 && !line.trim().startsWith("--")) {
-      errors.push({
-        message: "Statement before first `-- name:` header is ignored",
-        line: i + 1,
-      });
+    } else {
+      const trimmed = line.trim();
+      const isComment = trimmed.startsWith("--") || trimmed.startsWith("//");
+      if (trimmed.length > 0 && !isComment) {
+        errors.push({
+          message: "Statement before first `-- name:` (or `// name:`) header is ignored",
+          line: i + 1,
+        });
+      }
     }
   }
   flush();

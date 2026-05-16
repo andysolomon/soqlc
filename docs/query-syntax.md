@@ -1,7 +1,10 @@
 # Query syntax (`.soql` files)
 
 soqlc adopts sqlc's `-- name:` header convention. A `.soql` file may contain
-many named queries; the file is split on those headers.
+many named queries; the file is split on those headers. Both SQL-style
+(`--`) and SF DX–style (`//`) line comments are accepted, including for
+the header itself — that way existing `.soql` files written for the
+Salesforce VS Code extension Just Work after adding a header line.
 
 ```sql
 -- name: GetAccountById :one

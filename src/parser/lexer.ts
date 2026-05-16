@@ -8,7 +8,9 @@ export const WhiteSpace = createToken({
 
 export const LineComment = createToken({
   name: "LineComment",
-  pattern: /--[^\n\r]*/,
+  // Accept both SQL-style (--) and SF-DX-style (//) line comments. The SF
+  // VS Code extension's `.soql` files use //, while sqlc's tradition is --.
+  pattern: /(?:--|\/\/)[^\n\r]*/,
   group: Lexer.SKIPPED,
 });
 
