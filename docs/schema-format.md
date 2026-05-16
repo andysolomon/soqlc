@@ -1,11 +1,33 @@
 # `schema.soql.json` reference
 
 soqlc needs to know the shape of your Salesforce org (sObjects, fields,
-relationships) to type-check queries. In v0 that information lives in a JSON
-file you author by hand or generate from `sf` CLI / Metadata API.
+relationships) to type-check queries. In v0 you author this JSON file
+yourself.
 
-A future `soqlc pull-schema` command will produce this file directly from a
-connected org; see `roadmap.md`.
+## Authoring it from a real org (today)
+
+soqlc does **not** yet ship a converter, but you can produce the JSON from a
+connected org with the Salesforce CLI plus a small mapping step. `soqlc
+pull-schema` will automate this in a later release (see `roadmap.md`).
+
+```bash
+sf sobject describe --sobject Account --target-org my-dev-org --json > account.describe.json
+```
+
+Two transformations are then needed to fit soqlc's schema shape:
+
+1. **Type names are PascalCase.** `sf` returns lowercase (`string`,
+   `datetime`, `picklist`); soqlc expects `String`, `DateTime`, `Picklist`
+   (see the SOQL → TS table in `type-mapping.md`).
+2. **`picklistValues` is a flat `string[]`.** `sf` returns an array of
+   objects like `{ value, label, active }`. Extract `.value` and drop the
+   inactive ones if you wish.
+
+Everything else (`name`, `nillable`, `length`, `referenceTo`,
+`relationshipName`, `childRelationships`) maps 1:1.
+
+A minimal Node script is enough to do this conversion until `soqlc
+pull-schema` lands.
 
 ## Example
 
