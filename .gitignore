@@ -11,3 +11,7 @@ examples/**/generated/*
 
 # Salesforce SOQL/SOSL reference PDF (copyrighted; for local reference only)
 salesforce_soql_sosl.pdf
+
+# Intermediate sf sobject describe outputs — these are inputs to
+# scripts/from-sf-describe.ts, not source.
+*.describe.json

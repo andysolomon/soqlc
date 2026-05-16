@@ -6,28 +6,58 @@ yourself.
 
 ## Authoring it from a real org (today)
 
-soqlc does **not** yet ship a converter, but you can produce the JSON from a
-connected org with the Salesforce CLI plus a small mapping step. `soqlc
-pull-schema` will automate this in a later release (see `roadmap.md`).
+soqlc does **not** yet have a built-in `pull-schema` command (it's on the
+roadmap). In the meantime, the repo ships
+[`scripts/from-sf-describe.ts`](../scripts/from-sf-describe.ts) — a thin
+converter that takes one or more `sf sobject describe --json` payloads and
+writes a valid `schema.soql.json` to stdout.
+
+### Step 1 — authenticate the Salesforce CLI
 
 ```bash
-sf sobject describe --sobject Account --target-org my-dev-org --json > account.describe.json
+sf org login web --alias dev-org \
+  --instance-url https://your-instance.my.salesforce.com
 ```
 
-Two transformations are then needed to fit soqlc's schema shape:
+A browser window opens; log in once and `sf` stores the credentials.
 
-1. **Type names are PascalCase.** `sf` returns lowercase (`string`,
-   `datetime`, `picklist`); soqlc expects `String`, `DateTime`, `Picklist`
-   (see the SOQL → TS table in `type-mapping.md`).
-2. **`picklistValues` is a flat `string[]`.** `sf` returns an array of
-   objects like `{ value, label, active }`. Extract `.value` and drop the
-   inactive ones if you wish.
+### Step 2 — describe the sObjects you query
+
+```bash
+sf sobject describe --sobject Account --target-org dev-org --json > account.describe.json
+sf sobject describe --sobject Contact --target-org dev-org --json > contact.describe.json
+```
+
+### Step 3 — convert to `schema.soql.json`
+
+```bash
+tsx scripts/from-sf-describe.ts account.describe.json contact.describe.json > schema.soql.json
+```
+
+Or pipe a single sObject directly:
+
+```bash
+sf sobject describe --sobject Account --target-org dev-org --json \
+  | tsx scripts/from-sf-describe.ts > schema.soql.json
+```
+
+### What the converter does
+
+1. **Type names → PascalCase.** `sf` returns lowercase (`string`, `datetime`,
+   `picklist`); the converter maps these to `String`, `DateTime`, `Picklist`,
+   etc. — the full set is in `src/schema/model.ts`. Unknown types are
+   skipped with a stderr warning.
+2. **`picklistValues` → `string[]`.** `sf` returns
+   `{ value, label, active }[]`; the converter keeps active values' `.value`
+   strings.
+3. **Anonymous child relationships are dropped** (they can't be referenced
+   in SOQL anyway).
 
 Everything else (`name`, `nillable`, `length`, `referenceTo`,
 `relationshipName`, `childRelationships`) maps 1:1.
 
-A minimal Node script is enough to do this conversion until `soqlc
-pull-schema` lands.
+This will be superseded by `soqlc pull-schema` (see `roadmap.md`), which
+will hide the two-step describe + convert dance behind one command.
 
 ## Example
 
